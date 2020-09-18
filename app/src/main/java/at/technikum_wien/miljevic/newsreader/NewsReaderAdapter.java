@@ -1,6 +1,7 @@
 package at.technikum_wien.miljevic.newsreader;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,7 +13,7 @@ import java.util.List;
 
 public class NewsReaderAdapter extends RecyclerView.Adapter<NewsReaderViewHolder> {
 
-    List<NewsModel> newsList;
+    private List<NewsModel> newsList;
 
     NewsReaderAdapter(List<NewsModel> newsList) {
         this.newsList = newsList;
@@ -31,6 +32,12 @@ public class NewsReaderAdapter extends RecyclerView.Adapter<NewsReaderViewHolder
     @Override
     public void onBindViewHolder(@NonNull NewsReaderViewHolder holder, int position) {
         holder.bind(newsList.get(position));
+        holder.itemView.setOnClickListener(view -> {
+            final Context context = view.getContext();
+            final Intent intent = new Intent(context, DetailsActivity.class);
+            intent.putExtra(NewsHelper.NEWS_ITEM_EXTRA, newsList.get(position));
+            context.startActivity(intent);
+        });
     }
 
     @Override

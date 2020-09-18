@@ -3,11 +3,10 @@ package at.technikum_wien.miljevic.newsreader;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
-public class NewsModel implements Parcelable, Serializable {
+public class NewsModel implements Parcelable {
 
     private String title;
     private String description;
@@ -27,6 +26,7 @@ public class NewsModel implements Parcelable, Serializable {
         title = in.readString();
         description = in.readString();
         author = in.readString();
+        publicationDate = (Date) in.readSerializable();
         keywords = in.createStringArrayList();
     }
 
@@ -92,7 +92,7 @@ public class NewsModel implements Parcelable, Serializable {
         parcel.writeString(title);
         parcel.writeString(description);
         parcel.writeString(author);
-        parcel.writeValue(publicationDate);
+        parcel.writeSerializable(publicationDate);
         parcel.writeStringList(keywords);
     }
 }
