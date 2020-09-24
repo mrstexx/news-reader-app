@@ -13,10 +13,10 @@ import java.util.List;
 
 public class NewsReaderAdapter extends RecyclerView.Adapter<NewsReaderViewHolder> {
 
-    private List<NewsModel> newsList;
+    private List<NewsModel> mNewsList;
 
     NewsReaderAdapter(List<NewsModel> newsList) {
-        this.newsList = newsList;
+        this.mNewsList = newsList;
     }
 
     @NonNull
@@ -31,17 +31,17 @@ public class NewsReaderAdapter extends RecyclerView.Adapter<NewsReaderViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull NewsReaderViewHolder holder, int position) {
-        holder.bind(newsList.get(position));
+        holder.bind(mNewsList.get(position));
         holder.itemView.setOnClickListener(view -> {
             final Context context = view.getContext();
             final Intent intent = new Intent(context, DetailsActivity.class);
-            intent.putExtra(NewsHelper.NEWS_ITEM_EXTRA, newsList.get(position));
+            intent.putExtra(NewsHelper.NEWS_ITEM_EXTRA, mNewsList.get(position));
             context.startActivity(intent);
         });
     }
 
     @Override
     public int getItemCount() {
-        return newsList.size();
+        return mNewsList.size();
     }
 }

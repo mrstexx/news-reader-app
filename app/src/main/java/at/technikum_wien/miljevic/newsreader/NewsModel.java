@@ -11,8 +11,14 @@ public class NewsModel implements Parcelable {
     private String title;
     private String description;
     private String author;
+    private String link;
+    private String uniqueId;
+    private String image;
     private Date publicationDate;
     private List<String> keywords;
+
+    public NewsModel() {
+    }
 
     public NewsModel(String title, String description, String author, Date publicationDate, List<String> keywords) {
         this.title = title;
@@ -26,6 +32,9 @@ public class NewsModel implements Parcelable {
         title = in.readString();
         description = in.readString();
         author = in.readString();
+        link = in.readString();
+        uniqueId = in.readString();
+        image = in.readString();
         publicationDate = (Date) in.readSerializable();
         keywords = in.createStringArrayList();
     }
@@ -82,6 +91,30 @@ public class NewsModel implements Parcelable {
         this.keywords = keywords;
     }
 
+    public String getLink() {
+        return link;
+    }
+
+    public void setLink(String link) {
+        this.link = link;
+    }
+
+    public String getUniqueId() {
+        return uniqueId;
+    }
+
+    public void setUniqueId(String uniqueId) {
+        this.uniqueId = uniqueId;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -92,6 +125,9 @@ public class NewsModel implements Parcelable {
         parcel.writeString(title);
         parcel.writeString(description);
         parcel.writeString(author);
+        parcel.writeString(link);
+        parcel.writeString(uniqueId);
+        parcel.writeString(image);
         parcel.writeSerializable(publicationDate);
         parcel.writeStringList(keywords);
     }

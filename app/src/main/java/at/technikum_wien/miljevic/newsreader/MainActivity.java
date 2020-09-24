@@ -2,49 +2,52 @@ package at.technikum_wien.miljevic.newsreader;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.os.PersistableBundle;
-
-import java.util.ArrayList;
-import java.util.List;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = MainActivity.class.getSimpleName();
-    private static final String LIST_KEY = "listKey";
 
-    private List<NewsModel> newsList = new ArrayList<>();
+    private RecyclerView mNewsListView;
+    private NewsViewModel mViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        RecyclerView newsListView = findViewById(R.id.rv_news_reader);
+        mNewsListView = findViewById(R.id.rv_news_reader);
         // assign layout manager
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        newsListView.setLayoutManager(layoutManager);
-        newsListView.setHasFixedSize(false);
-        // check for saved instance data. maybe with dummy data it makes no sense, but later
-        // we will need it
-        if (savedInstanceState != null && savedInstanceState.containsKey(LIST_KEY)) {
-            newsList = savedInstanceState.getParcelableArrayList(LIST_KEY);
-        } else {
-            NewsHelper.readDummyData(newsList);
-        }
+        mNewsListView.setLayoutManager(layoutManager);
+        mNewsListView.setHasFixedSize(false);
 
-        // create and set adapter
-        NewsReaderAdapter newsReaderAdapter = new NewsReaderAdapter(newsList);
-        newsListView.setAdapter(newsReaderAdapter);
+        setupViewModel();
     }
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState, @NonNull PersistableBundle outPersistentState) {
         super.onSaveInstanceState(outState, outPersistentState);
-        outState.putParcelableArrayList(LIST_KEY, (ArrayList<? extends Parcelable>) newsList);
+    }
+
+    private void setupViewModel() {
+        mViewModel = new ViewModelProvider(this).get(NewsViewModel.class);
+        mViewModel.getNewsEntries().observe(this, newsModels -> {
+            if (newsModels == null) {
+                return;
+            }
+            if (newsModels.size() == 0) {
+                Toast.makeText(this, R.string.no_available_news, Toast.LENGTH_SHORT).show();
+            }
+            // create and set adapter
+            mNewsListView.setAdapter(new NewsReaderAdapter(newsModels));
+        });
     }
 }

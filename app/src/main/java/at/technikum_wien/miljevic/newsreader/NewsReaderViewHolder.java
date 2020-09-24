@@ -8,14 +8,14 @@ import androidx.recyclerview.widget.RecyclerView;
 
 public class NewsReaderViewHolder extends RecyclerView.ViewHolder {
 
-    private TextView listItemTitle;
+    private TextView mListItemTitle;
 
     public NewsReaderViewHolder(@NonNull View itemView) {
         super(itemView);
-        listItemTitle = itemView.findViewById(R.id.tv_item_title);
+        mListItemTitle = itemView.findViewById(R.id.tv_item_title);
     }
 
     public void bind(NewsModel newsModel) {
-        listItemTitle.setText(newsModel.getTitle());
+        mListItemTitle.setText(newsModel.getTitle());
     }
 }
