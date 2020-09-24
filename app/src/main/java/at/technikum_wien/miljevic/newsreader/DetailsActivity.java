@@ -34,7 +34,7 @@ public class DetailsActivity extends AppCompatActivity {
             authorText.setText(newsModel.getAuthor());
             dateText.setText(NewsHelper.getLocalDate(newsModel.getPublicationDate()));
             descriptionText.setText(newsModel.getDescription());
-            keywordsText.setText(String.join(", ", newsModel.getKeywords()));
+            keywordsText.setText("#" + String.join(", ", newsModel.getKeywords()));
         } else {
             Log.e(TAG, "Intent has no news item data");
         }
