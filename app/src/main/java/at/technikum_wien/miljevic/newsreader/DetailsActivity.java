@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class DetailsActivity extends AppCompatActivity {
 
@@ -15,6 +16,7 @@ public class DetailsActivity extends AppCompatActivity {
     private TextView mDateText;
     private TextView mDescriptionText;
     private TextView mKeywordsText;
+    private TextView mImageLink;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,6 +28,7 @@ public class DetailsActivity extends AppCompatActivity {
         mDateText = findViewById(R.id.details_date);
         mDescriptionText = findViewById(R.id.details_description);
         mKeywordsText = findViewById(R.id.details_keywords);
+        mImageLink = findViewById(R.id.url_image);
 
         if (getIntent().hasExtra(NewsHelper.NEWS_ITEM_EXTRA)) {
             NewsModel newsModel = getIntent().getParcelableExtra(NewsHelper.NEWS_ITEM_EXTRA);
@@ -35,8 +38,10 @@ public class DetailsActivity extends AppCompatActivity {
             mDateText.setText(NewsHelper.getLocalDate(newsModel.getPublicationDate()));
             mDescriptionText.setText(newsModel.getDescription());
             mKeywordsText.setText("#" + String.join(", ", newsModel.getKeywords()));
+            mImageLink.setText(newsModel.getImage());
         } else {
-            Log.e(TAG, "Intent has no news item data");
+            Toast.makeText(this, R.string.no_available_data, Toast.LENGTH_SHORT).show();
+            Log.w(TAG, "Intent has no news item data");
         }
     }
 }

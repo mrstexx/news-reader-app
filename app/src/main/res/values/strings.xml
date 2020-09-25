@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">News Reader</string>
     <string name="no_available_news">No available news</string>
+    <string name="no_available_data">No available data to be show</string>
 </resources>
