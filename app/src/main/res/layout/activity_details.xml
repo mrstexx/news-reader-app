@@ -10,7 +10,7 @@
         android:orientation="vertical"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
-        tools:context=".DetailsActivity">
+        tools:context=".details.DetailsActivity">
 
         <TextView
             android:id="@+id/details_title"

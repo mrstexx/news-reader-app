@@ -1,7 +1,6 @@
-package at.technikum_wien.miljevic.newsreader;
+package at.technikum_wien.miljevic.newsreader.news;
 
 import android.icu.text.SimpleDateFormat;
-import android.text.Html;
 import android.util.Xml;
 
 import org.xmlpull.v1.XmlPullParser;

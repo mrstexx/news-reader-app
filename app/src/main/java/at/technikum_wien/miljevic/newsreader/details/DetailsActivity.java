@@ -1,4 +1,4 @@
-package at.technikum_wien.miljevic.newsreader;
+package at.technikum_wien.miljevic.newsreader.details;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -6,6 +6,10 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import at.technikum_wien.miljevic.newsreader.R;
+import at.technikum_wien.miljevic.newsreader.news.NewsHelper;
+import at.technikum_wien.miljevic.newsreader.news.NewsModel;
 
 public class DetailsActivity extends AppCompatActivity {
 

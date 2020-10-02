@@ -1,4 +1,4 @@
-package at.technikum_wien.miljevic.newsreader;
+package at.technikum_wien.miljevic.newsreader.news;
 
 import android.content.Context;
 import android.content.Intent;
@@ -11,11 +11,14 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
+import at.technikum_wien.miljevic.newsreader.details.DetailsActivity;
+import at.technikum_wien.miljevic.newsreader.R;
+
 public class NewsReaderAdapter extends RecyclerView.Adapter<NewsReaderViewHolder> {
 
     private List<NewsModel> mNewsList;
 
-    NewsReaderAdapter(List<NewsModel> newsList) {
+    public NewsReaderAdapter(List<NewsModel> newsList) {
         this.mNewsList = newsList;
     }
 

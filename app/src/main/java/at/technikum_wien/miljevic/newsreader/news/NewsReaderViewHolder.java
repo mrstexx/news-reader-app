@@ -1,10 +1,12 @@
-package at.technikum_wien.miljevic.newsreader;
+package at.technikum_wien.miljevic.newsreader.news;
 
 import android.view.View;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import at.technikum_wien.miljevic.newsreader.R;
 
 public class NewsReaderViewHolder extends RecyclerView.ViewHolder {
 

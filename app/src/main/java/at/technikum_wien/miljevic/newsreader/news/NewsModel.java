@@ -1,4 +1,4 @@
-package at.technikum_wien.miljevic.newsreader;
+package at.technikum_wien.miljevic.newsreader.news;
 
 import android.os.Parcel;
 import android.os.Parcelable;

@@ -1,4 +1,4 @@
-package at.technikum_wien.miljevic.newsreader;
+package at.technikum_wien.miljevic.newsreader.news;
 
 import android.app.Application;
 import android.util.Log;
@@ -23,7 +23,7 @@ import java.util.concurrent.Executors;
 public class NewsViewModel extends AndroidViewModel {
 
     private static final String TAG = NewsViewModel.class.getSimpleName();
-    private static final String NEWS_ENDPOINT = "https://www.engadget.com/rss.xml";
+    private String mNewsRssFeed;
     private MutableLiveData<List<NewsModel>> mNewsEntries;
 
     public NewsViewModel(@NonNull Application application) {
@@ -48,7 +48,7 @@ public class NewsViewModel extends AndroidViewModel {
         HttpURLConnection urlConnection = null;
         List<NewsModel> newsData = new LinkedList<>();
         try {
-            URL url = new URL(NEWS_ENDPOINT);
+            URL url = new URL(mNewsRssFeed);
             urlConnection = (HttpURLConnection) url.openConnection();
             // closed after parsing
             InputStream is = urlConnection.getInputStream();
@@ -68,8 +68,11 @@ public class NewsViewModel extends AndroidViewModel {
     }
 
     public void reload() {
-        // maybe useful for later, currently not used
         updateEntries();
+    }
+
+    public void setNewsRssFeed(String rssFeed) {
+        this.mNewsRssFeed = rssFeed;
     }
 
 }
