@@ -1,6 +1,7 @@
 package at.technikum_wien.miljevic.newsreader.news;
 
 import android.icu.text.SimpleDateFormat;
+import android.text.Html;
 import android.util.Xml;
 
 import org.xmlpull.v1.XmlPullParser;
@@ -70,7 +71,11 @@ public class NewsXmlParser {
                 model.setTitle(text);
                 break;
             case "description":
-                model.setDescription(text.replaceAll("\\<.*?\\>", "").trim());
+                model.setDescription(
+                        Html.fromHtml(
+                                text.replaceAll("\\<.*?\\>", "").trim(),
+                                Html.FROM_HTML_MODE_LEGACY
+                        ).toString());
                 model.setImage(parseImgFromDescription(text));
                 break;
             case "dc:creator":

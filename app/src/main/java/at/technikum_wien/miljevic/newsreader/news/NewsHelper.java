@@ -6,7 +6,7 @@ import java.util.Date;
 
 public class NewsHelper {
 
-    private static final DateFormat formatter = DateFormat.getDateTimeInstance();
+    private static final DateFormat formatter = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.SHORT);
     public static final String NEWS_ITEM_EXTRA = "news_item";
 
     public static String getLocalDate(Date date) {

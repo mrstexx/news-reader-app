@@ -4,8 +4,11 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.bumptech.glide.Glide;
 
 import at.technikum_wien.miljevic.newsreader.R;
 import at.technikum_wien.miljevic.newsreader.news.NewsHelper;
@@ -15,24 +18,24 @@ public class DetailsActivity extends AppCompatActivity {
 
     private static final String TAG = DetailsActivity.class.getSimpleName();
 
+    private ImageView mImageView;
     private TextView mTitleText;
     private TextView mAuthorText;
     private TextView mDateText;
     private TextView mDescriptionText;
     private TextView mKeywordsText;
-    private TextView mImageLink;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_details);
 
+        mImageView = findViewById(R.id.iv_image);
         mTitleText = findViewById(R.id.details_title);
         mAuthorText = findViewById(R.id.details_author);
         mDateText = findViewById(R.id.details_date);
         mDescriptionText = findViewById(R.id.details_description);
         mKeywordsText = findViewById(R.id.details_keywords);
-        mImageLink = findViewById(R.id.url_image);
 
         if (getIntent().hasExtra(NewsHelper.NEWS_ITEM_EXTRA)) {
             NewsModel newsModel = getIntent().getParcelableExtra(NewsHelper.NEWS_ITEM_EXTRA);
@@ -42,7 +45,7 @@ public class DetailsActivity extends AppCompatActivity {
             mDateText.setText(NewsHelper.getLocalDate(newsModel.getPublicationDate()));
             mDescriptionText.setText(newsModel.getDescription());
             mKeywordsText.setText("#" + String.join(", ", newsModel.getKeywords()));
-            mImageLink.setText(newsModel.getImage());
+            Glide.with(this).load(newsModel.getImage()).into(mImageView);
         } else {
             Toast.makeText(this, R.string.no_available_data, Toast.LENGTH_SHORT).show();
             Log.w(TAG, "Intent has no news item data");

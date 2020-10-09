@@ -15,6 +15,8 @@ import at.technikum_wien.miljevic.newsreader.details.DetailsActivity;
 import at.technikum_wien.miljevic.newsreader.R;
 
 public class NewsReaderAdapter extends RecyclerView.Adapter<NewsReaderViewHolder> {
+    public static final int VIEW_TYPE_TOP = 0;
+    public static final int VIEW_TYPE_NORMAL = 1;
 
     private List<NewsModel> mNewsList;
 
@@ -26,7 +28,17 @@ public class NewsReaderAdapter extends RecyclerView.Adapter<NewsReaderViewHolder
     @Override
     public NewsReaderViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         Context context = parent.getContext();
-        int layoutIDForListItem = R.layout.news_list_item;
+        int layoutIDForListItem;
+        switch (viewType) {
+            case VIEW_TYPE_TOP:
+                layoutIDForListItem = R.layout.news_list_item_top;
+                break;
+            case VIEW_TYPE_NORMAL:
+                layoutIDForListItem = R.layout.news_list_item;
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid view type, value of " + viewType);
+        }
         LayoutInflater inflater = LayoutInflater.from(context);
         View view = inflater.inflate(layoutIDForListItem, parent, false);
         return new NewsReaderViewHolder(view);
@@ -45,6 +57,14 @@ public class NewsReaderAdapter extends RecyclerView.Adapter<NewsReaderViewHolder
 
     @Override
     public int getItemCount() {
-        return mNewsList.size();
+        return mNewsList == null ? 0 : mNewsList.size();
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        if (position == 0) {
+            return VIEW_TYPE_TOP;
+        }
+        return VIEW_TYPE_NORMAL;
     }
 }
