@@ -6,6 +6,7 @@
     <string name="reload">Reload</string>
     <string name="details">Details</string>
     <string name="loaded_image">Loaded Image</string>
+    <string name="full_story">Full Story</string>
 
     <string name="settings_feed_title">News Feed URL</string>
     <string name="settings_feed_url_default" translatable="false">https://www.engadget.com/rss.xml</string>
