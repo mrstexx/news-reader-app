@@ -97,6 +97,10 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                             key,
                             getString(R.string.settings_feed_url_default)));
             mViewModel.reload();
+        } else if (key.equals(getString(R.string.settings_display_image_key))) {
+            mViewModel.reload();
+        } else if (key.equals(getString(R.string.settings_download_image_key))) {
+            mViewModel.reload();
         }
     }
 
