@@ -45,7 +45,12 @@ public class DetailsActivity extends AppCompatActivity {
             mDateText.setText(NewsHelper.getLocalDate(newsModel.getPublicationDate()));
             mDescriptionText.setText(newsModel.getDescription());
             mKeywordsText.setText("#" + String.join(", ", newsModel.getKeywords()));
-            Glide.with(this).load(newsModel.getImage()).into(mImageView);
+            Glide.with(this)
+                    .load(newsModel.getImage())
+                    .onlyRetrieveFromCache(true)
+                    .placeholder(R.drawable.progress_anim)
+                    .error(R.drawable.ic_img_placeholder)
+                    .into(mImageView);
         } else {
             Toast.makeText(this, R.string.no_available_data, Toast.LENGTH_SHORT).show();
             Log.w(TAG, "Intent has no news item data");
