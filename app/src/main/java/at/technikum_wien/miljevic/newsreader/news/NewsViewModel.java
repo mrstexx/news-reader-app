@@ -1,6 +1,8 @@
 package at.technikum_wien.miljevic.newsreader.news;
 
 import android.app.Application;
+import android.database.sqlite.SQLiteConstraintException;
+import android.telecom.Call;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -20,33 +22,81 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.Executors;
 
+import at.technikum_wien.miljevic.newsreader.AppExecutors;
+import at.technikum_wien.miljevic.newsreader.dao.NewsEntity;
+import at.technikum_wien.miljevic.newsreader.repository.NewsRepository;
+
 public class NewsViewModel extends AndroidViewModel {
+    enum Error {
+        generalError,
+        insertError,
+        deleteError,
+    }
+
+    interface Callback {
+        void run(Error error);
+    }
 
     private static final String TAG = NewsViewModel.class.getSimpleName();
     private String mNewsRssFeed;
-    private MutableLiveData<List<NewsModel>> mNewsEntries;
+    private LiveData<List<NewsEntity>> mNewsEntries;
+    private NewsRepository mNewsRepository;
 
     public NewsViewModel(@NonNull Application application) {
         super(application);
-        mNewsEntries = new MutableLiveData<>();
+        mNewsRepository = new NewsRepository(application);
+        mNewsEntries = mNewsRepository.getNewsEntries();
         updateEntries();
     }
 
-    public LiveData<List<NewsModel>> getNewsEntries() {
+    public LiveData<List<NewsEntity>> getNewsEntries() {
         return mNewsEntries;
     }
 
-    private void updateEntries() {
-        mNewsEntries.setValue(null);
-        Executors.newSingleThreadExecutor().execute(() -> {
-            List<NewsModel> newsModels = loadNewsData();
-            mNewsEntries.postValue(newsModels);
+    public void insert(NewsEntity entry, Callback callback) {
+        AppExecutors.getInstance().diskIO().execute(() -> {
+            try {
+                mNewsRepository.insert(entry);
+                callback.run(null);
+            } catch (SQLiteConstraintException ex) {
+                callback.run(Error.insertError);
+            } catch (Exception ex) {
+                callback.run(Error.generalError);
+            }
         });
     }
 
-    private List<NewsModel> loadNewsData() {
+    public void delete(NewsEntity entry, Callback callback) {
+        AppExecutors.getInstance().diskIO().execute(() -> {
+            try {
+                mNewsRepository.delete(entry);
+                callback.run(null);
+            } catch (SQLiteConstraintException ex) {
+                callback.run(Error.deleteError);
+            } catch (Exception ex) {
+                callback.run(Error.generalError);
+            }
+        });
+    }
+
+    private void updateEntries() {
+        AppExecutors.getInstance().networkIO().execute(() -> {
+            List<NewsEntity> newsEntries = loadNewsData();
+            for (NewsEntity entry : newsEntries) {
+                insert(entry, error -> {
+                    if (error != null) {
+                        Log.e(TAG, "Inserting new news entry failed");
+                        return;
+                    }
+                    Log.d(TAG, "New entry '" + entry.getUniqueId() + "' successfully inserted to DB.");
+                });
+            }
+        });
+    }
+
+    private List<NewsEntity> loadNewsData() {
         HttpURLConnection urlConnection = null;
-        List<NewsModel> newsData = new LinkedList<>();
+        List<NewsEntity> newsData = new LinkedList<>();
         try {
             URL url = new URL(mNewsRssFeed);
             urlConnection = (HttpURLConnection) url.openConnection();

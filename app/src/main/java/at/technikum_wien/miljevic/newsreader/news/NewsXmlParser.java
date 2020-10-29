@@ -17,11 +17,13 @@ import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import at.technikum_wien.miljevic.newsreader.dao.NewsEntity;
+
 public class NewsXmlParser {
 
     private static final String ns = null;
 
-    public List<NewsModel> parse(InputStream in) throws XmlPullParserException, IOException, ParseException {
+    public List<NewsEntity> parse(InputStream in) throws XmlPullParserException, IOException, ParseException {
         try {
             XmlPullParser parser = Xml.newPullParser();
             parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false);
@@ -33,10 +35,10 @@ public class NewsXmlParser {
         }
     }
 
-    private List<NewsModel> readFeed(XmlPullParser parser) throws XmlPullParserException, IOException, ParseException {
-        List<NewsModel> newsEntries = new LinkedList<>();
+    private List<NewsEntity> readFeed(XmlPullParser parser) throws XmlPullParserException, IOException, ParseException {
+        List<NewsEntity> newsEntries = new LinkedList<>();
         parser.require(XmlPullParser.START_TAG, ns, "rss");
-        NewsModel newsModel = null;
+        NewsEntity newsEntry = null;
         int event = parser.getEventType();
         String tagName = "";
         String text = "";
@@ -45,7 +47,7 @@ public class NewsXmlParser {
             switch (event) {
                 case XmlPullParser.START_TAG:
                     if (tagName.equals("item")) {
-                        newsModel = new NewsModel();
+                        newsEntry = new NewsEntity();
                     }
                     break;
                 case XmlPullParser.TEXT:
@@ -53,10 +55,10 @@ public class NewsXmlParser {
                     break;
                 case XmlPullParser.END_TAG:
                     if (tagName.equals("item")) {
-                        newsEntries.add(newsModel);
+                        newsEntries.add(newsEntry);
                     }
-                    if (newsModel != null) {
-                        readEntry(newsModel, tagName, text);
+                    if (newsEntry != null) {
+                        readEntry(newsEntry, tagName, text);
                     }
                     break;
             }
@@ -65,39 +67,39 @@ public class NewsXmlParser {
         return newsEntries;
     }
 
-    private void readEntry(NewsModel model, String tag, String text) throws ParseException {
+    private void readEntry(NewsEntity newsEntry, String tag, String text) throws ParseException {
         switch (tag) {
             case "title":
-                model.setTitle(text);
+                newsEntry.setTitle(text);
                 break;
             case "description":
-                model.setDescription(
+                newsEntry.setDescription(
                         Html.fromHtml(
                                 text.replaceAll("\\<.*?\\>", "").trim(),
                                 Html.FROM_HTML_MODE_LEGACY
                         ).toString());
-                model.setImage(parseImgFromDescription(text));
+                newsEntry.setImage(parseImgFromDescription(text));
                 break;
             case "dc:creator":
-                model.setAuthor(text);
+                newsEntry.setAuthor(text);
                 break;
             case "link":
-                model.setLink(text);
+                newsEntry.setLink(text);
                 break;
             case "pubDate":
                 SimpleDateFormat formatter = new SimpleDateFormat(
                         "E, dd MMM yyyy HH:mm:ss Z",
                         Locale.US);
-                model.setPublicationDate(formatter.parse(text));
+                newsEntry.setPublicationDate(formatter.parse(text));
                 break;
             case "dc:identifier":
-                model.setUniqueId(text);
+                newsEntry.setUniqueId(text);
                 break;
             case "category":
-                if (model.getKeywords() == null) {
-                    model.setKeywords(new ArrayList<>());
+                if (newsEntry.getKeywords() == null) {
+                    newsEntry.setKeywords(new ArrayList<>());
                 }
-                model.getKeywords().add(text);
+                newsEntry.getKeywords().add(text);
                 break;
         }
     }

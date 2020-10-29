@@ -17,8 +17,8 @@ import androidx.preference.PreferenceManager;
 import com.bumptech.glide.Glide;
 
 import at.technikum_wien.miljevic.newsreader.R;
+import at.technikum_wien.miljevic.newsreader.dao.NewsEntity;
 import at.technikum_wien.miljevic.newsreader.news.NewsHelper;
-import at.technikum_wien.miljevic.newsreader.news.NewsModel;
 
 public class DetailsActivity extends AppCompatActivity {
 
@@ -32,7 +32,7 @@ public class DetailsActivity extends AppCompatActivity {
     private TextView mKeywordsText;
     private Button mFullStoryBtn;
 
-    private NewsModel newsModel;
+    private NewsEntity newsEntry;
     private boolean mDisplayImages;
 
     @Override
@@ -55,13 +55,13 @@ public class DetailsActivity extends AppCompatActivity {
                 getResources().getBoolean(R.bool.settings_display_images_default));
 
         if (getIntent().hasExtra(NewsHelper.NEWS_ITEM_EXTRA)) {
-            newsModel = getIntent().getParcelableExtra(NewsHelper.NEWS_ITEM_EXTRA);
-            assert newsModel != null;
-            mTitleText.setText(newsModel.getTitle());
-            mAuthorText.setText(newsModel.getAuthor());
-            mDateText.setText(NewsHelper.getLocalDate(newsModel.getPublicationDate()));
-            mDescriptionText.setText(newsModel.getDescription());
-            mKeywordsText.setText("#" + String.join(", ", newsModel.getKeywords()));
+            newsEntry = (NewsEntity) getIntent().getSerializableExtra(NewsHelper.NEWS_ITEM_EXTRA);
+            assert newsEntry != null;
+            mTitleText.setText(newsEntry.getTitle());
+            mAuthorText.setText(newsEntry.getAuthor());
+            mDateText.setText(NewsHelper.getLocalDate(newsEntry.getPublicationDate()));
+            mDescriptionText.setText(newsEntry.getDescription());
+            mKeywordsText.setText("#" + String.join(", ", newsEntry.getKeywords()));
             mFullStoryBtn.setOnClickListener(this::onFullStoryButtonClick);
             displayImage();
         } else {
@@ -74,8 +74,7 @@ public class DetailsActivity extends AppCompatActivity {
     private void displayImage() {
         if (mDisplayImages) {
             Glide.with(this)
-                    .load(newsModel.getImage())
-                    .onlyRetrieveFromCache(true)
+                    .load(newsEntry.getImage())
                     .placeholder(R.drawable.progress_anim)
                     .error(R.drawable.ic_img_placeholder)
                     .into(mImageView);
@@ -85,7 +84,7 @@ public class DetailsActivity extends AppCompatActivity {
     }
 
     private void onFullStoryButtonClick(View view) {
-        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(newsModel.getLink()));
+        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(newsEntry.getLink()));
         startActivity(browserIntent);
     }
 }

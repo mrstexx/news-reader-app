@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
+import at.technikum_wien.miljevic.newsreader.dao.NewsEntity;
 import at.technikum_wien.miljevic.newsreader.details.DetailsActivity;
 import at.technikum_wien.miljevic.newsreader.R;
 
@@ -18,9 +19,9 @@ public class NewsReaderAdapter extends RecyclerView.Adapter<NewsReaderViewHolder
     public static final int VIEW_TYPE_TOP = 0;
     public static final int VIEW_TYPE_NORMAL = 1;
 
-    private List<NewsModel> mNewsList;
+    private List<NewsEntity> mNewsList;
 
-    public NewsReaderAdapter(List<NewsModel> newsList) {
+    public NewsReaderAdapter(List<NewsEntity> newsList) {
         this.mNewsList = newsList;
     }
 

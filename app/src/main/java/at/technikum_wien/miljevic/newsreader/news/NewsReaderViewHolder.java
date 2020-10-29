@@ -11,9 +11,9 @@ import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 import at.technikum_wien.miljevic.newsreader.R;
+import at.technikum_wien.miljevic.newsreader.dao.NewsEntity;
 
 public class NewsReaderViewHolder extends RecyclerView.ViewHolder {
 
@@ -38,18 +38,17 @@ public class NewsReaderViewHolder extends RecyclerView.ViewHolder {
                 context.getResources().getBoolean(R.bool.settings_display_images_default));
     }
 
-    public void bind(NewsModel newsModel) {
-        mItemTitle.setText(newsModel.getTitle());
-        mItemAuthor.setText(newsModel.getAuthor());
-        mItemDate.setText(NewsHelper.getLocalDate(newsModel.getPublicationDate()));
-        displayImage(newsModel.getImage());
+    public void bind(NewsEntity newsEntity) {
+        mItemTitle.setText(newsEntity.getTitle());
+        mItemAuthor.setText(newsEntity.getAuthor());
+        mItemDate.setText(NewsHelper.getLocalDate(newsEntity.getPublicationDate()));
+        displayImage(newsEntity.getImage());
     }
 
     private void displayImage(String imageUrl) {
         if (mDisplayImages) {
             Glide.with(itemView.getContext())
                     .load(imageUrl)
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .placeholder(R.drawable.progress_anim)
                     .error(R.drawable.ic_img_placeholder)
                     .into(mImageView);

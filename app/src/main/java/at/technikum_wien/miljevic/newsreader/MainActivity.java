@@ -77,15 +77,15 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     }
 
     private void observeViewModel() {
-        mViewModel.getNewsEntries().observe(this, newsModels -> {
-            if (newsModels == null) {
+        mViewModel.getNewsEntries().observe(this, newsEntries -> {
+            if (newsEntries == null) {
                 return;
             }
-            if (newsModels.size() == 0) {
+            if (newsEntries.size() == 0) {
                 Toast.makeText(this, R.string.no_available_news, Toast.LENGTH_SHORT).show();
             }
             // create and set adapter
-            mNewsListView.setAdapter(new NewsReaderAdapter(newsModels));
+            mNewsListView.setAdapter(new NewsReaderAdapter(newsEntries));
         });
     }
 
