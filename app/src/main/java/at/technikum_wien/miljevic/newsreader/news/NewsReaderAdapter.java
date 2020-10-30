@@ -19,7 +19,7 @@ public class NewsReaderAdapter extends RecyclerView.Adapter<NewsReaderViewHolder
     public static final int VIEW_TYPE_TOP = 0;
     public static final int VIEW_TYPE_NORMAL = 1;
 
-    private List<NewsEntity> mNewsList;
+    private final List<NewsEntity> mNewsList;
 
     public NewsReaderAdapter(List<NewsEntity> newsList) {
         this.mNewsList = newsList;

@@ -25,11 +25,19 @@ public class NewsRepository {
         return mEntries;
     }
 
+    public NewsEntity getEntryByUniqueId(String uniqueId) {
+        return mNewsDao.getEntryByUniqueId(uniqueId);
+    }
+
     public void insert(NewsEntity entry) {
         mNewsDao.insert(entry);
     }
 
     public void delete(NewsEntity entry) {
         mNewsDao.delete(entry);
+    }
+
+    public void update(NewsEntity entry) {
+        mNewsDao.update(entry);
     }
 }

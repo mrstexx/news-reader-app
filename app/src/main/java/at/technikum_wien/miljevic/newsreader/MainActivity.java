@@ -46,6 +46,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                         getString(R.string.settings_feed_url_key),
                         getString(R.string.settings_feed_url_default)));
         observeViewModel();
+        mViewModel.reload();
     }
 
     @Override

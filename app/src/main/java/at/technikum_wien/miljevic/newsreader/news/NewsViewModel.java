@@ -2,13 +2,11 @@ package at.technikum_wien.miljevic.newsreader.news;
 
 import android.app.Application;
 import android.database.sqlite.SQLiteConstraintException;
-import android.telecom.Call;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
 
 import org.xmlpull.v1.XmlPullParserException;
 
@@ -20,7 +18,6 @@ import java.net.URL;
 import java.text.ParseException;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.Executors;
 
 import at.technikum_wien.miljevic.newsreader.AppExecutors;
 import at.technikum_wien.miljevic.newsreader.dao.NewsEntity;
@@ -39,14 +36,13 @@ public class NewsViewModel extends AndroidViewModel {
 
     private static final String TAG = NewsViewModel.class.getSimpleName();
     private String mNewsRssFeed;
-    private LiveData<List<NewsEntity>> mNewsEntries;
-    private NewsRepository mNewsRepository;
+    private final LiveData<List<NewsEntity>> mNewsEntries;
+    private final NewsRepository mNewsRepository;
 
     public NewsViewModel(@NonNull Application application) {
         super(application);
         mNewsRepository = new NewsRepository(application);
         mNewsEntries = mNewsRepository.getNewsEntries();
-        updateEntries();
     }
 
     public LiveData<List<NewsEntity>> getNewsEntries() {
@@ -57,6 +53,19 @@ public class NewsViewModel extends AndroidViewModel {
         AppExecutors.getInstance().diskIO().execute(() -> {
             try {
                 mNewsRepository.insert(entry);
+                callback.run(null);
+            } catch (SQLiteConstraintException ex) {
+                callback.run(Error.insertError);
+            } catch (Exception ex) {
+                callback.run(Error.generalError);
+            }
+        });
+    }
+
+    public void update(NewsEntity entry, Callback callback) {
+        AppExecutors.getInstance().diskIO().execute(() -> {
+            try {
+                mNewsRepository.update(entry);
                 callback.run(null);
             } catch (SQLiteConstraintException ex) {
                 callback.run(Error.insertError);
@@ -79,17 +88,48 @@ public class NewsViewModel extends AndroidViewModel {
         });
     }
 
-    private void updateEntries() {
-        AppExecutors.getInstance().networkIO().execute(() -> {
-            List<NewsEntity> newsEntries = loadNewsData();
-            for (NewsEntity entry : newsEntries) {
-                insert(entry, error -> {
+    private void matchNewOldEntries(List<NewsEntity> newEntries) {
+        List<NewsEntity> oldEntries = mNewsEntries.getValue();
+        for (NewsEntity oldEntry : oldEntries) {
+            if (newEntries.stream().noneMatch(entry -> entry.getUniqueId().equals(oldEntry.getUniqueId()))) {
+                delete(oldEntry, error -> {
                     if (error != null) {
-                        Log.e(TAG, "Inserting new news entry failed");
+                        Log.e(TAG, "Deleting old news entry failed");
                         return;
                     }
-                    Log.d(TAG, "New entry '" + entry.getUniqueId() + "' successfully inserted to DB.");
+                    Log.d(TAG, "DELETE: Existing entry '" + oldEntry.getUniqueId() + "' successfully removed from DB.");
                 });
+            }
+        }
+        for (NewsEntity entry : newEntries) {
+            final String uniqueId = entry.getUniqueId();
+            NewsEntity uniqueEntry = mNewsRepository.getEntryByUniqueId(uniqueId);
+            if (uniqueEntry != null) {
+                entry.setId(uniqueEntry.getId());
+                update(entry, error -> {
+                    if (error != null) {
+                        Log.e(TAG, "Updating news entry failed");
+                        return;
+                    }
+                    Log.d(TAG, "UPDATE: Existing entry '" + entry.getUniqueId() + "' successfully updated in DB.");
+                });
+                continue;
+            }
+            insert(entry, error -> {
+                if (error != null) {
+                    Log.e(TAG, "INSERT: Inserting new news entry failed");
+                    return;
+                }
+                Log.d(TAG, "New entry '" + entry.getUniqueId() + "' successfully inserted to DB.");
+            });
+        }
+    }
+
+    private void updateEntries() {
+        AppExecutors.getInstance().networkIO().execute(() -> {
+            List<NewsEntity> newsData = loadNewsData();
+            if (!newsData.isEmpty()) {
+                matchNewOldEntries(newsData);
             }
         });
     }

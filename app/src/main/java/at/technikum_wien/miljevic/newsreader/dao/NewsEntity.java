@@ -1,8 +1,5 @@
 package at.technikum_wien.miljevic.newsreader.dao;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
 import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
@@ -15,8 +12,8 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
-@Entity(tableName = "news", indices = {@Index(value = {"title", "uniqueId"}, unique = true)})
-public class NewsEntity implements Serializable {
+@Entity(tableName = "news", indices = {@Index(value = {"uniqueId"}, unique = true)})
+public class NewsEntity implements Serializable, Comparable<NewsEntity> {
     @ColumnInfo(name = "_id")
     @PrimaryKey(autoGenerate = true)
     private long id;
@@ -174,5 +171,10 @@ public class NewsEntity implements Serializable {
 
     public void setKeywords(@NonNull List<String> keywords) {
         this.keywords = keywords;
+    }
+
+    @Override
+    public int compareTo(NewsEntity newsEntity) {
+        return uniqueId.compareTo(newsEntity.getUniqueId());
     }
 }
