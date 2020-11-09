@@ -1,13 +1,7 @@
 package at.technikum_wien.miljevic.newsreader;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.preference.PreferenceManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.PersistableBundle;
@@ -15,9 +9,22 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.preference.PreferenceManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import at.technikum_wien.miljevic.newsreader.dao.NewsEntity;
+import at.technikum_wien.miljevic.newsreader.details.DetailsActivity;
 import at.technikum_wien.miljevic.newsreader.news.NewsReaderAdapter;
 import at.technikum_wien.miljevic.newsreader.news.NewsViewModel;
+import at.technikum_wien.miljevic.newsreader.services.NewsBroadcastReceiver;
+import at.technikum_wien.miljevic.newsreader.services.NewsIntentService;
 import at.technikum_wien.miljevic.newsreader.settings.SettingsActivity;
+import at.technikum_wien.miljevic.newsreader.utils.NewsHelper;
+import at.technikum_wien.miljevic.newsreader.utils.NotificationUtils;
 
 public class MainActivity extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
 
@@ -31,22 +38,40 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // load shared preferences
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         sharedPreferences.registerOnSharedPreferenceChangeListener(this);
 
-        mNewsListView = findViewById(R.id.rv_news_reader);
         // assign layout manager
+        mNewsListView = findViewById(R.id.rv_news_reader);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         mNewsListView.setLayoutManager(layoutManager);
         mNewsListView.setHasFixedSize(false);
 
+        // create view model
         mViewModel = new ViewModelProvider(this).get(NewsViewModel.class);
         mViewModel.setNewsRssFeed(
                 sharedPreferences.getString(
                         getString(R.string.settings_feed_url_key),
                         getString(R.string.settings_feed_url_default)));
+        // run observe mode on view model live list
         observeViewModel();
-        mViewModel.reload();
+
+        // retrieve and show data using intent service
+        Intent intent = new Intent(this, NewsIntentService.class);
+        mViewModel.startInitService(() -> {
+            intent.setAction(NewsIntentService.DOWNLOAD_TASK);
+            intent.putExtra("rssFeed", mViewModel.getNewsRssFeed());
+            startService(intent);
+        });
+
+        // register broadcast receiver
+        IntentFilter filter = new IntentFilter(NewsIntentService.DOWNLOAD_TASK);
+        NewsBroadcastReceiver newsBroadcastReceiver = new NewsBroadcastReceiver(mViewModel);
+        registerReceiver(newsBroadcastReceiver, filter);
+
+        // create download worker
+        mViewModel.loadDataFromWorker(this);
     }
 
     @Override
@@ -92,6 +117,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        // TODO RELOAD !!!!
         if (key.equals(getString(R.string.settings_feed_url_key))) {
             mViewModel.setNewsRssFeed(
                     sharedPreferences.getString(

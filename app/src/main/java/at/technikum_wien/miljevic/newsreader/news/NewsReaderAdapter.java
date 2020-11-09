@@ -11,9 +11,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
+import at.technikum_wien.miljevic.newsreader.R;
 import at.technikum_wien.miljevic.newsreader.dao.NewsEntity;
 import at.technikum_wien.miljevic.newsreader.details.DetailsActivity;
-import at.technikum_wien.miljevic.newsreader.R;
+import at.technikum_wien.miljevic.newsreader.utils.NewsHelper;
 
 public class NewsReaderAdapter extends RecyclerView.Adapter<NewsReaderViewHolder> {
     public static final int VIEW_TYPE_TOP = 0;

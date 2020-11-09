@@ -18,7 +18,8 @@ import com.bumptech.glide.Glide;
 
 import at.technikum_wien.miljevic.newsreader.R;
 import at.technikum_wien.miljevic.newsreader.dao.NewsEntity;
-import at.technikum_wien.miljevic.newsreader.news.NewsHelper;
+import at.technikum_wien.miljevic.newsreader.utils.NewsHelper;
+import at.technikum_wien.miljevic.newsreader.utils.NotificationUtils;
 
 public class DetailsActivity extends AppCompatActivity {
 
@@ -34,6 +35,7 @@ public class DetailsActivity extends AppCompatActivity {
 
     private NewsEntity newsEntry;
     private boolean mDisplayImages;
+    private boolean mDownloadImages;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,7 +54,12 @@ public class DetailsActivity extends AppCompatActivity {
 
         mDisplayImages = sharedPreferences.getBoolean(
                 getString(R.string.settings_display_image_key),
-                getResources().getBoolean(R.bool.settings_display_images_default));
+                getResources().getBoolean(R.bool.settings_display_images_default)
+        );
+        mDownloadImages = sharedPreferences.getBoolean(
+                getString(R.string.settings_download_image_key),
+                getResources().getBoolean(R.bool.settings_download_images_default)
+        );
 
         if (getIntent().hasExtra(NewsHelper.NEWS_ITEM_EXTRA)) {
             newsEntry = (NewsEntity) getIntent().getSerializableExtra(NewsHelper.NEWS_ITEM_EXTRA);
@@ -76,6 +83,7 @@ public class DetailsActivity extends AppCompatActivity {
             Glide.with(this)
                     .load(newsEntry.getImage())
                     .placeholder(R.drawable.progress_anim)
+                    .onlyRetrieveFromCache(mDownloadImages)
                     .error(R.drawable.ic_img_placeholder)
                     .into(mImageView);
         } else {

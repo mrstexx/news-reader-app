@@ -1,4 +1,4 @@
-package at.technikum_wien.miljevic.newsreader.news;
+package at.technikum_wien.miljevic.newsreader.utils;
 
 import android.icu.text.SimpleDateFormat;
 import android.text.Html;

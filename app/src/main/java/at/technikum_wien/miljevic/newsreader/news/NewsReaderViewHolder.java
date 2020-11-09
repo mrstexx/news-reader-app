@@ -11,9 +11,11 @@ import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 import at.technikum_wien.miljevic.newsreader.R;
 import at.technikum_wien.miljevic.newsreader.dao.NewsEntity;
+import at.technikum_wien.miljevic.newsreader.utils.NewsHelper;
 
 public class NewsReaderViewHolder extends RecyclerView.ViewHolder {
 
@@ -23,6 +25,7 @@ public class NewsReaderViewHolder extends RecyclerView.ViewHolder {
     private TextView mItemDate;
 
     private boolean mDisplayImages;
+    private boolean mDownloadImages;
 
     public NewsReaderViewHolder(@NonNull View itemView) {
         super(itemView);
@@ -35,7 +38,12 @@ public class NewsReaderViewHolder extends RecyclerView.ViewHolder {
 
         mDisplayImages = sharedPreferences.getBoolean(
                 context.getString(R.string.settings_display_image_key),
-                context.getResources().getBoolean(R.bool.settings_display_images_default));
+                context.getResources().getBoolean(R.bool.settings_display_images_default)
+        );
+        mDownloadImages = sharedPreferences.getBoolean(
+                context.getString(R.string.settings_download_image_key),
+                context.getResources().getBoolean(R.bool.settings_download_images_default)
+        );
     }
 
     public void bind(NewsEntity newsEntity) {
@@ -50,6 +58,7 @@ public class NewsReaderViewHolder extends RecyclerView.ViewHolder {
             Glide.with(itemView.getContext())
                     .load(imageUrl)
                     .placeholder(R.drawable.progress_anim)
+                    .diskCacheStrategy(mDownloadImages ? DiskCacheStrategy.ALL : DiskCacheStrategy.NONE)
                     .error(R.drawable.ic_img_placeholder)
                     .into(mImageView);
         } else {

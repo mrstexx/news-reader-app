@@ -1,6 +1,7 @@
 package at.technikum_wien.miljevic.newsreader.repository;
 
 import android.app.Application;
+import android.content.Context;
 
 import androidx.lifecycle.LiveData;
 
@@ -12,11 +13,20 @@ import at.technikum_wien.miljevic.newsreader.dao.NewsEntity;
 
 public class NewsRepository {
     private static final String LOG_TAG = NewsRepository.class.getSimpleName();
-    private final NewsDao mNewsDao;
-    private final LiveData<List<NewsEntity>> mEntries;
+    private NewsDao mNewsDao;
+    private LiveData<List<NewsEntity>> mEntries;
 
     public NewsRepository(Application application) {
         ApplicationDatabase db = ApplicationDatabase.getInstance(application);
+        init(db);
+    }
+
+    public NewsRepository(Context context) {
+        ApplicationDatabase db = ApplicationDatabase.getInstance(context);
+        init(db);
+    }
+
+    private void init(ApplicationDatabase db) {
         mNewsDao = db.newsDao();
         mEntries = mNewsDao.getEntries();
     }
