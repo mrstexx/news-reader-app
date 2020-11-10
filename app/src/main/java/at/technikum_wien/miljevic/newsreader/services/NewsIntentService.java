@@ -25,7 +25,7 @@ public class NewsIntentService extends IntentService {
 
     @Override
     protected void onHandleIntent(@Nullable Intent intent) {
-        if (intent.getAction().equals(DOWNLOAD_TASK)) {
+        if (intent.getAction().equals(DOWNLOAD_TASK) || intent.getAction().equals(RELOAD_TASK)) {
             String rssFeedUrl = intent.getStringExtra("rssFeed");
             List<NewsEntity> newsEntities = NewsTasks.downloadNews(rssFeedUrl);
             // create new response intent
@@ -33,8 +33,6 @@ public class NewsIntentService extends IntentService {
             intentResponse.setAction(intent.getAction());
             intentResponse.putExtra(DOWNLOAD_TASK_OUT, (Serializable) newsEntities);
             sendBroadcast(intentResponse);
-        } else if (intent.getAction().equals(RELOAD_TASK)) {
-            NewsTasks.reloadNews(this);
         }
     }
 }

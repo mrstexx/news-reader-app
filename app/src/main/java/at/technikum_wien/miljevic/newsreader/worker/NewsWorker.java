@@ -9,6 +9,7 @@ import android.util.Log;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.lifecycle.LiveData;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
@@ -29,10 +30,12 @@ public class NewsWorker extends Worker {
 
     private final NewsRepository newsRepository;
     private final Context mContext;
+    private final LiveData<List<NewsEntity>> mEntries;
 
     public NewsWorker(@NonNull Context context, @NonNull WorkerParameters parameters) {
         super(context, parameters);
         newsRepository = new NewsRepository(context);
+        mEntries = newsRepository.getNewsEntries();
         mContext = context;
     }
 
@@ -43,18 +46,16 @@ public class NewsWorker extends Worker {
         // download and proceed news data here
         String rssFeedUrl = getInputData().getString(RSS_FEED_URL);
         List<NewsEntity> newsData = NewsTasks.downloadNews(rssFeedUrl);
+        List<NewsEntity> oldData = newsRepository.getEntriesAsList();
         // for remove entries that are older than 5 days
-        List<NewsEntity> oldData = newsRepository.getNewsEntries().getValue();
-        if (oldData != null) {
-            for (NewsEntity newsEntity : oldData) {
-                if (isOldNewsEntry(newsEntity)) {
+        for (NewsEntity newsEntity : oldData) {
+            if (isOldNewsEntry(newsEntity)) {
+                Log.d(LOG_TAG, "REMOVE: removing entry with the id '" + newsEntity.getUniqueId() + "'");
+                try {
+                    newsRepository.delete(newsEntity);
                     Log.d(LOG_TAG, "REMOVE: removing entry with the id '" + newsEntity.getUniqueId() + "'");
-                    try {
-                        newsRepository.delete(newsEntity);
-                        Log.d(LOG_TAG, "REMOVE: removing entry with the id '" + newsEntity.getUniqueId() + "'");
-                    } catch (Exception ex) {
-                        Log.e(LOG_TAG, "REMOVE FAILED: ", ex);
-                    }
+                } catch (Exception ex) {
+                    Log.e(LOG_TAG, "REMOVE FAILED: ", ex);
                 }
             }
         }
@@ -63,11 +64,13 @@ public class NewsWorker extends Worker {
             try {
                 newsRepository.insert(newsEntity);
                 Log.d(LOG_TAG, "INSERT/UPDATE: inserting/updating entry with the id '" + newsEntity.getUniqueId() + "'");
+                if (newsRepository.getEntryByUniqueId(newsEntity.getUniqueId()) == null) {
+                    showNotification(newsEntity);
+                }
             } catch (Exception ex) {
                 Log.e(LOG_TAG, "INSERT/UPDATE FAILED: ", ex);
             }
         }
-        showNotification(newsData.get(0));
         return Result.success();
     }
 

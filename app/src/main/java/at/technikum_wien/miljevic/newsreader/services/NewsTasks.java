@@ -45,10 +45,4 @@ public class NewsTasks {
         }
         return newsData;
     }
-
-    // to be called on reload
-    public static void reloadNews(Context context) {
-        // TODO
-    }
-
 }

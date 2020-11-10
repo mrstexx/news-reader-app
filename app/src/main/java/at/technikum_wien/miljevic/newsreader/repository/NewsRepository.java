@@ -35,6 +35,10 @@ public class NewsRepository {
         return mEntries;
     }
 
+    public List<NewsEntity> getEntriesAsList() {
+        return mNewsDao.getEntriesAsList();
+    }
+
     public NewsEntity getEntryByUniqueId(String uniqueId) {
         return mNewsDao.getEntryByUniqueId(uniqueId);
     }

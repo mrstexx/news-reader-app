@@ -15,6 +15,9 @@ public interface NewsDao {
     @Query("SELECT * FROM news ORDER BY publicationDate DESC")
     LiveData<List<NewsEntity>> getEntries();
 
+    @Query("SELECT * FROM news ORDER BY publicationDate DESC")
+    List<NewsEntity> getEntriesAsList();
+
     @Query("SELECT * FROM news WHERE _id=:id")
     LiveData<NewsEntity> getEntryById(long id);
 

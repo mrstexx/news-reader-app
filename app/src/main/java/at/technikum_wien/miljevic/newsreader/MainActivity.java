@@ -66,7 +66,9 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         });
 
         // register broadcast receiver
-        IntentFilter filter = new IntentFilter(NewsIntentService.DOWNLOAD_TASK);
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(NewsIntentService.DOWNLOAD_TASK);
+        filter.addAction(NewsIntentService.RELOAD_TASK);
         NewsBroadcastReceiver newsBroadcastReceiver = new NewsBroadcastReceiver(mViewModel);
         registerReceiver(newsBroadcastReceiver, filter);
 
@@ -94,7 +96,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                 startActivity(intent);
                 return true;
             case R.id.action_reload:
-                mViewModel.reload();
+                reload();
                 break;
             default:
                 break;
@@ -117,18 +119,24 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        // TODO RELOAD !!!!
         if (key.equals(getString(R.string.settings_feed_url_key))) {
             mViewModel.setNewsRssFeed(
                     sharedPreferences.getString(
                             key,
                             getString(R.string.settings_feed_url_default)));
-            mViewModel.reload();
+            reload();
         } else if (key.equals(getString(R.string.settings_display_image_key))) {
-            mViewModel.reload();
+            reload();
         } else if (key.equals(getString(R.string.settings_download_image_key))) {
-            mViewModel.reload();
+            reload();
         }
+    }
+
+    private void reload() {
+        Intent intent = new Intent(this, NewsIntentService.class);
+        intent.setAction(NewsIntentService.RELOAD_TASK);
+        intent.putExtra("rssFeed", mViewModel.getNewsRssFeed());
+        startService(intent);
     }
 
     @Override

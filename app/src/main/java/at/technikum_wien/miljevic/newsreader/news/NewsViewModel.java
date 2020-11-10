@@ -117,10 +117,6 @@ public class NewsViewModel extends AndroidViewModel {
         });
     }
 
-    public void reload() {
-
-    }
-
     public void updateNewsData(List<NewsEntity> newsEntities) {
         updateEntries(newsEntities);
     }

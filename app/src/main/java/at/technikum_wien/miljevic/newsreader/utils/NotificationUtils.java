@@ -18,10 +18,8 @@ import at.technikum_wien.miljevic.newsreader.details.DetailsActivity;
 
 public class NotificationUtils {
 
-    private static final String LOG_TAG = NotificationUtils.class.getCanonicalName();
     private static final String NOTIFICATION_ID_KEY = "notification_id";
     public static final String CHANNEL_ID = "my_channel_01";// The id of the channel.
-    public static final String NOTIFICATION_EXTRA = "notification_extra";
 
     public static void createNotification(Context context, NewsEntity entry, Bitmap bitmap) {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
