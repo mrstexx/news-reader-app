@@ -16,15 +16,11 @@ import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import at.technikum_wien.miljevic.newsreader.dao.NewsEntity;
-import at.technikum_wien.miljevic.newsreader.details.DetailsActivity;
 import at.technikum_wien.miljevic.newsreader.news.NewsReaderAdapter;
 import at.technikum_wien.miljevic.newsreader.news.NewsViewModel;
 import at.technikum_wien.miljevic.newsreader.services.NewsBroadcastReceiver;
 import at.technikum_wien.miljevic.newsreader.services.NewsIntentService;
 import at.technikum_wien.miljevic.newsreader.settings.SettingsActivity;
-import at.technikum_wien.miljevic.newsreader.utils.NewsHelper;
-import at.technikum_wien.miljevic.newsreader.utils.NotificationUtils;
 
 public class MainActivity extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
 

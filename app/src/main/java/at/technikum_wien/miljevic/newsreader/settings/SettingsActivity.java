@@ -1,8 +1,8 @@
 package at.technikum_wien.miljevic.newsreader.settings;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.os.Bundle;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import at.technikum_wien.miljevic.newsreader.R;
 

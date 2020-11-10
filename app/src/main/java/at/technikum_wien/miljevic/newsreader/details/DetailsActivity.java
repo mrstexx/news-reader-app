@@ -19,7 +19,6 @@ import com.bumptech.glide.Glide;
 import at.technikum_wien.miljevic.newsreader.R;
 import at.technikum_wien.miljevic.newsreader.dao.NewsEntity;
 import at.technikum_wien.miljevic.newsreader.utils.NewsHelper;
-import at.technikum_wien.miljevic.newsreader.utils.NotificationUtils;
 
 public class DetailsActivity extends AppCompatActivity {
 

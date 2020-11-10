@@ -1,7 +1,5 @@
 package at.technikum_wien.miljevic.newsreader.services;
 
-import android.content.Context;
-import android.content.Intent;
 import android.util.Log;
 
 import org.xmlpull.v1.XmlPullParserException;

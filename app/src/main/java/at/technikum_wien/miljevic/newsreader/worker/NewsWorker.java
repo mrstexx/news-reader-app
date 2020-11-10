@@ -3,10 +3,8 @@ package at.technikum_wien.miljevic.newsreader.worker;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
-import android.database.sqlite.SQLiteConstraintException;
 import android.os.Build;
 import android.util.Log;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
@@ -16,10 +14,7 @@ import androidx.work.WorkerParameters;
 import java.time.ZonedDateTime;
 import java.util.List;
 
-import at.technikum_wien.miljevic.newsreader.AppExecutors;
-import at.technikum_wien.miljevic.newsreader.ApplicationDatabase;
 import at.technikum_wien.miljevic.newsreader.dao.NewsEntity;
-import at.technikum_wien.miljevic.newsreader.news.NewsViewModel;
 import at.technikum_wien.miljevic.newsreader.repository.NewsRepository;
 import at.technikum_wien.miljevic.newsreader.services.NewsTasks;
 import at.technikum_wien.miljevic.newsreader.utils.NotificationUtils;
